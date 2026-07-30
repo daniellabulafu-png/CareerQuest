@@ -1,0 +1,45 @@
+{
+  "properties": {
+    "role": {
+      "type": "string",
+      "description": "The role of the user in the app",
+      "enum": [
+        "admin",
+        "user"
+      ]
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "student",
+        "faculty"
+      ],
+      "default": "student"
+    },
+    "department": {
+      "type": "string"
+    },
+    "major": {
+      "type": "string"
+    },
+    "minor": {
+      "type": "string"
+    },
+    "grad_year": {
+      "type": "string"
+    },
+    "opt_in_advising": {
+      "type": "boolean",
+      "default": false
+    },
+    "theme_preference": {
+      "type": "string",
+      "default": "pioneer"
+    }
+  },
+  "required": [
+    "role"
+  ],
+  "name": "User",
+  "type": "object"
+}

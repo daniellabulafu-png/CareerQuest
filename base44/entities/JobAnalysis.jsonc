@@ -1,0 +1,37 @@
+{
+  "name": "JobAnalysis",
+  "type": "object",
+  "properties": {
+    "job_text": {
+      "type": "string"
+    },
+    "job_title": {
+      "type": "string"
+    },
+    "matched_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "gap_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "match_percentage": {
+      "type": "integer",
+      "default": 0
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "job_text"
+  ]
+}

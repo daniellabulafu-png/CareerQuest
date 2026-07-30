@@ -1,0 +1,51 @@
+{
+  "name": "StudentProfile",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "level": {
+      "type": "integer",
+      "default": 1
+    },
+    "total_xp": {
+      "type": "integer",
+      "default": 0
+    },
+    "xp_to_next_level": {
+      "type": "integer",
+      "default": 1000
+    },
+    "major": {
+      "type": "string"
+    },
+    "grad_year": {
+      "type": "string"
+    },
+    "university": {
+      "type": "string"
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "linkedin_url": {
+      "type": "string"
+    },
+    "resume_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

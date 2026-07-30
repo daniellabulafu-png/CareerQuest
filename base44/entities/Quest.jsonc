@@ -1,0 +1,76 @@
+{
+  "name": "Quest",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Guidance",
+        "Skills",
+        "Experience",
+        "Connections"
+      ],
+      "default": "Guidance"
+    },
+    "quest_group": {
+      "type": "string",
+      "enum": [
+        "Daily Warmups",
+        "First-Year Milestones",
+        "Major-Specific Quests",
+        "Senior Boss Quests"
+      ],
+      "default": "First-Year Milestones"
+    },
+    "major": {
+      "type": "string"
+    },
+    "xp_reward": {
+      "type": "integer",
+      "default": 50
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "locked",
+        "available",
+        "completed"
+      ],
+      "default": "available"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "icon": {
+      "type": "string",
+      "default": "Target"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "Easy",
+        "Medium",
+        "Hard"
+      ],
+      "default": "Easy"
+    },
+    "steps_total": {
+      "type": "integer",
+      "default": 1
+    },
+    "steps_done": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

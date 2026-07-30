@@ -1,0 +1,44 @@
+{
+  "name": "Application",
+  "type": "object",
+  "properties": {
+    "company": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Wishlist",
+        "Applied",
+        "Interviewing",
+        "Offer",
+        "Rejected"
+      ],
+      "default": "Wishlist"
+    },
+    "link": {
+      "type": "string"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "applied_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "salary_range": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "company",
+    "role"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "name": "Experience",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "organization": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Internship",
+        "Job",
+        "Employment",
+        "Project",
+        "Coursework",
+        "Thesis/Research Project",
+        "Study Abroad",
+        "Symposium Presentation",
+        "Creative Portfolio Item",
+        "Campus Leadership",
+        "Extracurricular",
+        "Volunteer",
+        "Volunteer/Community Service"
+      ],
+      "default": "Project"
+    },
+    "description": {
+      "type": "string"
+    },
+    "competencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "current": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

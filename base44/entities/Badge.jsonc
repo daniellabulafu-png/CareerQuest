@@ -1,0 +1,41 @@
+{
+  "name": "Badge",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "default": "Award"
+    },
+    "color": {
+      "type": "string",
+      "default": "amber"
+    },
+    "earned": {
+      "type": "boolean",
+      "default": false
+    },
+    "earned_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "Common",
+        "Rare",
+        "Epic",
+        "Legendary"
+      ],
+      "default": "Common"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

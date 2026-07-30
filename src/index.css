@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 96%;
+    --card: 222 40% 11%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 250 84% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 250 84% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 250 84% 60%;
+    --xp: 45 93% 56%;
+    --xp-glow: 45 93% 56%;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --danger: 0 72% 51%;
+    --hot: 14 90% 55%;
+    --frost: 199 89% 60%;
+    --radius: 0.75rem;
+    --font-heading: ui-sans-serif, system-ui, sans-serif;
+    --font-body: ui-sans-serif, system-ui, sans-serif;
+    --font-display: ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+    background-image: radial-gradient(circle at 15% 10%, hsl(250 60% 14% / 0.5), transparent 40%),
+                      radial-gradient(circle at 85% 80%, hsl(199 60% 14% / 0.35), transparent 40%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .glow-primary {
+    box-shadow: 0 0 24px -4px hsl(var(--primary) / 0.6);
+  }
+  .glow-xp {
+    box-shadow: 0 0 24px -4px hsl(var(--xp) / 0.6);
+  }
+  .glow-hot {
+    box-shadow: 0 0 28px -2px hsl(var(--hot) / 0.55);
+  }
+  .glow-frost {
+    box-shadow: 0 0 28px -2px hsl(var(--frost) / 0.45);
+  }
+  .glow-success {
+    box-shadow: 0 0 24px -4px hsl(var(--success) / 0.5);
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--xp)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .text-gradient-xp {
+    background: linear-gradient(135deg, hsl(45 93% 60%), hsl(38 92% 50%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .card-glass {
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 16px -4px hsl(var(--primary) / 0.5); }
+  50% { box-shadow: 0 0 28px 0px hsl(var(--primary) / 0.8); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+.animate-flicker {
+  animation: flame-flicker 1.6s ease-in-out infinite;
+}
+@keyframes float-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-float-up {
+  animation: float-up 0.4s ease-out;
+}
+
+/* Light theme overrides */
+html.light {
+  --background: 210 40% 96%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 250 84% 55%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 93%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 220 14% 93%;
+  --muted-foreground: 220 9% 40%;
+  --accent: 250 84% 55%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 82%;
+  --input: 220 13% 82%;
+  --ring: 250 84% 55%;
+}
+html.light body {
+  background-image: radial-gradient(circle at 15% 10%, hsl(250 80% 92% / 0.6), transparent 40%),
+                    radial-gradient(circle at 85% 80%, hsl(199 80% 90% / 0.4), transparent 40%);
+}
+
+/* Reduce animations for low-spec screens / accessibility */
+.reduce-animations .animate-pulse-glow,
+.reduce-animations .animate-flicker,
+.reduce-animations .animate-float-up,
+.reduce-animations .glow-primary,
+.reduce-animations .glow-xp,
+.reduce-animations .glow-hot,
+.reduce-animations .glow-frost,
+.reduce-animations .glow-success {
+  animation: none !important;
+  box-shadow: none !important;
+}

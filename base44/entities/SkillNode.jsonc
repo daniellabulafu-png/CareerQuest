@@ -1,0 +1,51 @@
+{
+  "name": "SkillNode",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Technical",
+        "Leadership",
+        "Communication",
+        "Problem Solving",
+        "Teamwork"
+      ]
+    },
+    "level": {
+      "type": "integer",
+      "default": 0
+    },
+    "max_level": {
+      "type": "integer",
+      "default": 3
+    },
+    "unlocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "description": {
+      "type": "string"
+    },
+    "position_x": {
+      "type": "number"
+    },
+    "position_y": {
+      "type": "number"
+    },
+    "prerequisite": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "default": "Circle"
+    }
+  },
+  "required": [
+    "name",
+    "category"
+  ]
+}

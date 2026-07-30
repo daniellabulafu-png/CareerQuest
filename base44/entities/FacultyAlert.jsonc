@@ -1,0 +1,49 @@
+{
+  "name": "FacultyAlert",
+  "type": "object",
+  "properties": {
+    "student_name": {
+      "type": "string"
+    },
+    "major": {
+      "type": "string"
+    },
+    "grad_year": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "default": "Medium"
+    },
+    "level": {
+      "type": "integer",
+      "default": 1
+    },
+    "total_xp": {
+      "type": "integer",
+      "default": 0
+    },
+    "applications_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "last_activity": {
+      "type": "string"
+    },
+    "avatar_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "student_name"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "InterviewResult",
+  "type": "object",
+  "properties": {
+    "boss_name": {
+      "type": "string"
+    },
+    "boss_role": {
+      "type": "string"
+    },
+    "boss_avatar": {
+      "type": "string"
+    },
+    "score": {
+      "type": "integer",
+      "default": 0
+    },
+    "passed": {
+      "type": "boolean",
+      "default": false
+    },
+    "xp_earned": {
+      "type": "integer",
+      "default": 0
+    },
+    "feedback": {
+      "type": "string"
+    },
+    "questions_count": {
+      "type": "integer",
+      "default": 3
+    },
+    "badge_earned": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "boss_name"
+  ]
+}
