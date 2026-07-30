@@ -1,12 +1,57 @@
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/lib/currentUser';
+
+const DEFAULT_PROFILE = {
+  name: 'New Explorer',
+  level: 1,
+  total_xp: 0,
+  xp_to_next_level: 1000,
+  major: '',
+  grad_year: '',
+  university: 'Lewis & Clark College',
+  avatar_url: '',
+  title: 'Career Novice',
+  bio: '',
+  linkedin_url: '',
+  resume_url: '',
+};
+
+// Filters by the current user when authenticated; falls back to an unfiltered
+// list (previous behavior) when there is no user id.
+async function myList(entity, query, sort, limit) {
+  const user = await getCurrentUser();
+  if (user?.id) {
+    return base44.entities[entity].filter({ ...(query || {}), created_by_id: user.id }, sort, limit);
+  }
+  return base44.entities[entity].list(sort, limit);
+}
 
 export function useStudent() {
   return useQuery({
     queryKey: ['studentProfile'],
     queryFn: async () => {
-      const list = await base44.entities.StudentProfile.list();
-      return list?.[0] || null;
+      const user = await getCurrentUser();
+      const list = user?.id
+        ? await base44.entities.StudentProfile.filter({ created_by_id: user.id })
+        : await base44.entities.StudentProfile.list();
+      if (list?.[0]) return list[0];
+      // Auto-create a profile for new users so the dashboard renders and XP works
+      if (user?.id) {
+        try {
+          return await base44.entities.StudentProfile.create({
+            name: user.full_name || user.email || 'New Explorer',
+            email: user.email || '',
+            level: 1,
+            total_xp: 0,
+            xp_to_next_level: 1000,
+            university: 'Lewis & Clark College',
+          });
+        } catch (e) {
+          // fall through to default
+        }
+      }
+      return { ...DEFAULT_PROFILE };
     },
   });
 }
@@ -14,20 +59,14 @@ export function useStudent() {
 export function useExperiences() {
   return useQuery({
     queryKey: ['experiences'],
-    queryFn: async () => {
-      const list = await base44.entities.Experience.list('-created_date', 50);
-      return list || [];
-    },
+    queryFn: async () => (await myList('Experience', {}, '-created_date', 50)) || [],
   });
 }
 
 export function useQuests() {
   return useQuery({
     queryKey: ['quests'],
-    queryFn: async () => {
-      const list = await base44.entities.Quest.list();
-      return list || [];
-    },
+    queryFn: async () => (await myList('Quest')) || [],
   });
 }
 
@@ -44,10 +83,7 @@ export function useSkillNodes() {
 export function useBusinessCards() {
   return useQuery({
     queryKey: ['businessCards'],
-    queryFn: async () => {
-      const list = await base44.entities.BusinessCard.list('-last_contact_date', 50);
-      return list || [];
-    },
+    queryFn: async () => (await myList('BusinessCard', {}, '-last_contact_date', 50)) || [],
   });
 }
 
@@ -64,30 +100,21 @@ export function useBadges() {
 export function useInterviewResults() {
   return useQuery({
     queryKey: ['interviewResults'],
-    queryFn: async () => {
-      const list = await base44.entities.InterviewResult.list('-date', 20);
-      return list || [];
-    },
+    queryFn: async () => (await myList('InterviewResult', {}, '-date', 20)) || [],
   });
 }
 
 export function useApplications() {
   return useQuery({
     queryKey: ['applications'],
-    queryFn: async () => {
-      const list = await base44.entities.Application.list();
-      return list || [];
-    },
+    queryFn: async () => (await myList('Application')) || [],
   });
 }
 
 export function useDocuments() {
   return useQuery({
     queryKey: ['documents'],
-    queryFn: async () => {
-      const list = await base44.entities.Document.list('-uploaded_at', 50);
-      return list || [];
-    },
+    queryFn: async () => (await myList('Document', {}, '-uploaded_at', 50)) || [],
   });
 }
 
@@ -104,10 +131,7 @@ export function useFacultyAlerts() {
 export function useJobAnalyses() {
   return useQuery({
     queryKey: ['jobAnalyses'],
-    queryFn: async () => {
-      const list = await base44.entities.JobAnalysis.list('-date', 10);
-      return list || [];
-    },
+    queryFn: async () => (await myList('JobAnalysis', {}, '-date', 10)) || [],
   });
 }
 

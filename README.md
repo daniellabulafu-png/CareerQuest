@@ -1,77 +1,101 @@
-# Base44 Project
+# CareerQuest 🚀
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+> A gamified, privacy-first career readiness web application built for Lewis & Clark College students.
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+[![Lewis & Clark College](https://img.shields.io/badge/Lewis_%26_Clark-Otters-E35205)](https://www.lclark.edu)
+[![WCAG 2.1 AA](https://img.shields.io/badge/Accessibility-WCAG_2.1_AA-blue)](https://www.w3.org/TR/WCAG21/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Prerequisites
+**Live Demo:** [https://careerquest-app.base44.app/](https://careerquest-app.base44.app/)
 
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
+---
 
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
+## 📌 Overview
 
-## Run Locally
+**CareerQuest** bridges the gap between academic exploration and post-graduation career success for Lewis & Clark College students. Designed with a privacy-first architecture, multi-disciplinary customization, and NACE-aligned skill tracking, CareerQuest turns career preparation into an engaging, structured journey across all majors—from Biology and Computer Science to International Affairs and English.
 
-Run the full local development environment from the project root:
+## 🎭 Demo State & Seed Data
 
-```bash
-base44 dev
-```
+To give judges and reviewers an immediate, full-featured experience without requiring a 30-minute onboarding process, CareerQuest loads with **Pre-populated Demo Data**:
 
-`base44 dev` starts the local Base44 development backend and, when this app is configured for it, also starts the frontend dev server for you. Use the frontend URL printed by the command.
+- **Demo Identity (`Alex Chen`):** Pre-loaded with XP, an active Computer Science skill tree path, sample applications, and CRM contacts to showcase active user workflows.
+- **Dual-Role Navigation (Student + Faculty):** Both student questing views and faculty cohort analytics views are accessible directly within the demo header. This allows reviewers to evaluate both sides of the FERPA-conscious advising portal without needing separate account logins.
 
-For example, when the Base44 project config includes a `serveCommand`, `base44 dev` can launch the frontend too:
+---
 
-```json5
-{
-  "site": {
-    "serveCommand": "npm run dev"
-  }
-}
-```
+## ✨ Key Features
 
-In a Base44 project this lives in `base44/config.jsonc`.
+### 🎓 L&C Otter Identity & Customizable UI Themes
+- **Institutional Branding:** Integrated L&C Otter logo and campus aesthetic.
+- **Student Choice Palettes:** 5 pre-configured, WCAG AA compliant theme palettes:
+  - **Otter Spirit:** Official L&C Orange (`#E35205`) & Slate *(Default)*
+  - **PNW Forest:** Deep Evergreen (`#1B4332`) & Sage (`#74C69D`)
+  - **Midnight Cyber:** Deep Indigo (`#0F172A`) & Electric Cyan (`#06B6D4`)
+  - **Palatine Sunset:** Warm Terracotta (`#C85A32`) & Gold
+  - **High-Contrast Accessible:** Black, White, & High-Contrast Blue/Yellow
 
-## Run Only The Frontend
+### 🛡️ Privacy-First Faculty Portal & Advising Queue
+- **FERPA Compliant:** Student career data remains completely private by default.
+- **Opt-In Queue:** Students can explicitly toggle advising access to share their profile, skill gaps, and active applications with L&C career advisors for 1-on-1 prep.
+- **Anonymized Department Analytics:** Faculty view aggregated skill gap heatmaps and engagement metrics without accessing individual student profiles without permission.
 
-If you only want to work on the frontend against the hosted Base44 backend, run:
+### 🌳 Interactive Skill Tree & NACE Alignment
+- **Central Liberal Arts Trunk:** Core competencies including Critical Thinking, Written Communication, Research, and Global Engagement.
+- **Disciplinary Branches:** Customized node pathways for STEM, Humanities, Social Sciences, and Creative Arts.
+- **NACE Badging:** Automatic tagging aligned with National Association of Colleges and Employers (NACE) standards.
 
-```bash
-npm run dev
-```
+### 🤖 Disciplinary AI Interview "Battle Bots"
+Major-specific interview practice bots tailored to different academic fields:
+- **STEM Bot:** Lab methodologies, technical problem-solving, and data interpretation.
+- **Humanities & Arts Bot:** Portfolio reviews, creative process, and writing sample defenses.
+- **Social Sciences Bot:** Qualitative research, policy analysis, and behavioral scenarios.
+- **Business/Econ Bot:** Market analysis, strategy, and quantitative reasoning.
 
-Open the local URL printed by Vite.
+### 💼 Networking CRM & "Unfreeze" Workflow
+- Contact cards with dynamic temperature tracking (**Hot** vs. **Frozen** after 30+ days inactive).
+- One-click **"Unfreeze"** action generating tailored 2-sentence follow-up templates.
 
-## Use The Hosted Backend
+### ♿ Accessibility (WCAG 2.1 AA Compliant)
+- Minimum 4.5:1 color contrast ratio across all dynamic themes.
+- Non-color-reliant UI indicators (icons and text labels paired with state colors).
+- Full keyboard navigation and ARIA screen reader labels.
+- **Reduce Animations** toggle for motion sensitivity and performance optimization.
 
-For frontend-only development, create or update `.env.local` in the project root:
+---
 
-```bash
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
-```
+## 🛠️ Tech Stack & Architecture
 
-`VITE_BASE44_APP_ID` identifies the Base44 app.
+- **Frontend:** React, Tailwind CSS, Lucide Icons, Shadcn UI
+- **Build Tool:** Vite
+- **Backend & Data Layer:** Base44 Native Entity Layer
+- **State & Context:** React Context API (Auth, Settings, Theme)
+- **Deployment:** Base44 Cloud Platform
 
-`VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
+---
 
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
+## 🗄️ Base44 Data Entity Schema
 
-## Publish Your Changes
+The application uses Base44's native entity backend structure:
 
-After pushing your changes to git, open the Base44 dashboard and publish the app:
+- `User`: Handles student/faculty authentication, profiles, role-based access control (RBAC), and theme preferences.
+- `StudentProfile`: Tracks XP, level, active major/minor, and pillar progression.
+- `Quest`: Stores 25+ disciplinary quests across Guidance, Experience, Connections, and Applications.
+- `SkillNode`: Maps unlocked and locked nodes on the interactive Skill Tree.
+- `BusinessCard`: Manages networking contacts, follow-up dates, and temperature states.
+- `Application`: Tracks internship and job applications through Kanban pipeline stages.
+- `AdvisingRequest`: Manages opt-in requests between students and faculty advisors.
 
-```bash
-base44 dashboard open
-```
+---
 
-## Docs & Support
+## 🚀 Quickstart & Local Setup
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm or yarn
 
-Base44 CLI command reference: [https://docs.base44.com/developers/references/cli/commands/introduction](https://docs.base44.com/developers/references/cli/commands/introduction)
+### Installation
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/YOUR-USERNAME/career-quest.git](https://github.com/YOUR-USERNAME/career-quest.git)
+   cd career-quest

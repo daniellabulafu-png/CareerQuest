@@ -22,35 +22,32 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
-      
-      // First, check app public settings (with token if available)
-      // This will tell us if auth is required, user not registered, etc.
+
       const appClient = createAxiosClient({
         baseURL: `/api/apps/public`,
         headers: {
           'X-App-Id': appParams.appId
         },
-        token: appParams.token, // Include token if available
+        token: appParams.token,
         interceptResponses: true
       });
-      
+
+      // Kick off public-settings and (when a token exists) the auth check
+      // concurrently so they overlap instead of waterfalling.
+      const publicSettingsPromise = appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
+      let mePromise = null;
+      if (appParams.token) {
+        setIsLoadingAuth(true);
+        mePromise = base44.auth.me();
+        mePromise.catch(() => {}); // suppress unhandled rejection; handled below
+      }
+
       try {
-        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
+        const publicSettings = await publicSettingsPromise;
         setAppPublicSettings(publicSettings);
-        
-        // If we got the app public settings successfully, check if user is authenticated
-        if (appParams.token) {
-          await checkUserAuth();
-        } else {
-          setIsLoadingAuth(false);
-          setIsAuthenticated(false);
-          setAuthChecked(true);
-        }
-        setIsLoadingPublicSettings(false);
       } catch (appError) {
         console.error('App state check failed:', appError);
-        
-        // Handle app-level errors
+
         if (appError.status === 403 && appError.data?.extra_data?.reason) {
           const reason = appError.data.extra_data.reason;
           if (reason === 'auth_required') {
@@ -77,7 +74,31 @@ export const AuthProvider = ({ children }) => {
         }
         setIsLoadingPublicSettings(false);
         setIsLoadingAuth(false);
+        return;
       }
+
+      if (mePromise) {
+        try {
+          const currentUser = await mePromise;
+          setUser(currentUser);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('User auth check failed:', error);
+          setIsAuthenticated(false);
+          if (error.status === 401 || error.status === 403) {
+            setAuthError({
+              type: 'auth_required',
+              message: 'Authentication required'
+            });
+          }
+        }
+        setIsLoadingAuth(false);
+        setAuthChecked(true);
+      } else {
+        setIsLoadingAuth(false);
+        setAuthChecked(true);
+      }
+      setIsLoadingPublicSettings(false);
     } catch (error) {
       console.error('Unexpected error:', error);
       setAuthError({
@@ -91,7 +112,6 @@ export const AuthProvider = ({ children }) => {
 
   const checkUserAuth = async () => {
     try {
-      // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
       setUser(currentUser);
@@ -103,8 +123,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingAuth(false);
       setIsAuthenticated(false);
       setAuthChecked(true);
-      
-      // If user auth fails, it might be an expired token
+
       if (error.status === 401 || error.status === 403) {
         setAuthError({
           type: 'auth_required',
@@ -117,25 +136,22 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
-    
+
     if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
       base44.auth.logout(window.location.href);
     } else {
-      // Just remove the token without redirect
       base44.auth.logout();
     }
   };
 
   const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
     base44.auth.redirectToLogin(window.location.href);
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated,
       isLoadingAuth,
       isLoadingPublicSettings,
       authError,
