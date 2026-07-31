@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/lib/currentUser';
+import { isGuest } from '@/lib/guest';
+import { MOCK_STUDENT, MOCK_SKILL_NODES, MOCK_BUSINESS_CARDS, MOCK_BADGES, MOCK_APPLICATIONS, MOCK_FACULTY_ALERTS, MOCK_ADVISING_REQUESTS, GUEST_MOCK_DATA } from '@/lib/guestMockData';
 
 const DEFAULT_PROFILE = {
   name: 'New Explorer',
@@ -20,6 +22,7 @@ const DEFAULT_PROFILE = {
 // Filters by the current user when authenticated; falls back to an unfiltered
 // list (previous behavior) when there is no user id.
 async function myList(entity, query, sort, limit) {
+  if (isGuest()) return GUEST_MOCK_DATA[entity] || [];
   const user = await getCurrentUser();
   if (user?.id) {
     return base44.entities[entity].filter({ ...(query || {}), created_by_id: user.id }, sort, limit);
@@ -31,6 +34,7 @@ export function useStudent() {
   return useQuery({
     queryKey: ['studentProfile'],
     queryFn: async () => {
+      if (isGuest()) return MOCK_STUDENT;
       const user = await getCurrentUser();
       const list = user?.id
         ? await base44.entities.StudentProfile.filter({ created_by_id: user.id })
@@ -75,6 +79,7 @@ export function useSkillNodes() {
   return useQuery({
     queryKey: ['skillNodes'],
     queryFn: async () => {
+      if (isGuest()) return MOCK_SKILL_NODES;
       const list = await base44.entities.SkillNode.list();
       return list || [];
     },
@@ -85,6 +90,7 @@ export function useBusinessCards() {
   return useQuery({
     queryKey: ['businessCards'],
     queryFn: async () => {
+      if (isGuest()) return MOCK_BUSINESS_CARDS;
       const list = await base44.entities.BusinessCard.list('-last_contact_date', 50);
       return list || [];
     },
@@ -95,6 +101,7 @@ export function useBadges() {
   return useQuery({
     queryKey: ['badges'],
     queryFn: async () => {
+      if (isGuest()) return MOCK_BADGES;
       const list = await base44.entities.Badge.list();
       return list || [];
     },
@@ -112,6 +119,7 @@ export function useApplications() {
   return useQuery({
     queryKey: ['applications'],
     queryFn: async () => {
+      if (isGuest()) return MOCK_APPLICATIONS;
       const list = await base44.entities.Application.list();
       return list || [];
     },
@@ -129,6 +137,7 @@ export function useFacultyAlerts() {
   return useQuery({
     queryKey: ['facultyAlerts'],
     queryFn: async () => {
+      if (isGuest()) return MOCK_FACULTY_ALERTS;
       const list = await base44.entities.FacultyAlert.list();
       return list || [];
     },
@@ -146,6 +155,7 @@ export function useAdvisingRequests() {
   return useQuery({
     queryKey: ['advisingRequests'],
     queryFn: async () => {
+      if (isGuest()) return MOCK_ADVISING_REQUESTS;
       const requests = await base44.entities.AdvisingRequest.filter({ status: 'pending' });
       if (!requests?.length) return [];
       const profiles = await base44.entities.StudentProfile.list('-created_date', 500);
