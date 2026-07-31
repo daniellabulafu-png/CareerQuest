@@ -23,6 +23,9 @@
     "major": {
       "type": "string"
     },
+    "minor": {
+      "type": "string"
+    },
     "grad_year": {
       "type": "string"
     },
