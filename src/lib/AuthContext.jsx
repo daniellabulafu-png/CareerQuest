@@ -145,7 +145,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const navigateToLogin = () => {
-    base44.auth.redirectToLogin(window.location.href);
+    // Avoid an infinite redirect loop: when already on an auth page, the
+    // auth check will fail again, so don't pass the login URL back into
+    // from_url (it would nest and double-encode on every redirect).
+    const authPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
+    if (authPaths.includes(window.location.pathname)) {
+      base44.auth.redirectToLogin('/');
+    } else {
+      base44.auth.redirectToLogin(window.location.href);
+    }
   };
 
   return (
