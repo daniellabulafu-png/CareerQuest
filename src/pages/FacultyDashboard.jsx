@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Shield, AlertTriangle, Users, TrendingUp, Activity, Search, GraduationCap, Flame, Handshake, Mail, Check, Send } from 'lucide-react';
 import { useFacultyAlerts, useSkillNodes, useQuests } from '@/hooks/useEntities';
+import StudentProfileModal from '@/components/StudentProfileModal';
+import { useToast } from '@/components/ui/use-toast';
 
 const severityColors = {
   Critical: 'border-destructive/50 bg-destructive/10 text-destructive',
@@ -50,12 +52,17 @@ export default function FacultyDashboard() {
   const [cohortFilter, setCohortFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [nudgeSent, setNudgeSent] = useState({});
+  const [outreachSent, setOutreachSent] = useState({});
+  const [sending, setSending] = useState({});
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const { toast } = useToast();
 
   // Students who explicitly opted into career advising (privacy-gated)
+  // NOTE: Mock data for testing phase — swap to useAdvisingRequests() hook when real data exists
   const supportQueue = [
-    { name: 'Emily Johnson', major: 'Psychology', level: 1, xp: 120, gaps: ['Data Analysis', 'Public Speaking'], apps: 0, note: 'Requested help with resume' },
-    { name: 'Marcus Lee', major: 'International Affairs', level: 2, xp: 280, gaps: ['Quantitative Reasoning'], apps: 1, note: 'Exploring grad school options' },
-    { name: 'Maya Patel', major: 'Environmental Studies', level: 1, xp: 90, gaps: ['Leadership', 'Research & Analysis'], apps: 0, note: 'First-gen student, needs guidance' },
+    { id: 'mock-1', name: 'Emily Johnson', major: 'Psychology', level: 1, xp: 120, gaps: ['Data Analysis', 'Public Speaking'], apps: 0, note: 'Requested help with resume' },
+    { id: 'mock-2', name: 'Marcus Lee', major: 'International Affairs', level: 2, xp: 280, gaps: ['Quantitative Reasoning'], apps: 1, note: 'Exploring grad school options' },
+    { id: 'mock-3', name: 'Maya Patel', major: 'Environmental Studies', level: 1, xp: 90, gaps: ['Leadership', 'Research & Analysis'], apps: 0, note: 'First-gen student, needs guidance' },
   ];
 
   // Anonymized aggregate alerts — no individual names revealed
@@ -65,7 +72,23 @@ export default function FacultyDashboard() {
     { message: '2 Senior Rhetoric & Media Studies majors have frozen networking cards (30+ days inactive)', major: 'Rhetoric & Media Studies' },
   ];
 
-  const sendNudge = (i) => setNudgeSent((s) => ({ ...s, [i]: true }));
+  const sendNudge = (i, alert) => {
+    setSending((s) => ({ ...s, [`nudge-${i}`]: true }));
+    setTimeout(() => {
+      setSending((s) => ({ ...s, [`nudge-${i}`]: false }));
+      setNudgeSent((s) => ({ ...s, [i]: true }));
+      toast({ title: 'Cohort nudge sent', description: `Mock emails sent to ${alert.major} students` });
+    }, 800);
+  };
+
+  const handleReachOut = (alert) => {
+    setSending((s) => ({ ...s, [`outreach-${alert.id}`]: true }));
+    setTimeout(() => {
+      setSending((s) => ({ ...s, [`outreach-${alert.id}`]: false }));
+      setOutreachSent((s) => ({ ...s, [alert.id]: true }));
+      toast({ title: 'Outreach email sent', description: `Mock email sent to ${alert.student_name}` });
+    }, 800);
+  };
 
   const totalStudents = cohortData.reduce((s, c) => s + c.students, 0);
   const avgEngagement = Math.round(cohortData.reduce((s, c) => s + c.engagement, 0) / cohortData.length);
@@ -202,8 +225,12 @@ export default function FacultyDashboard() {
                     <span className="text-muted-foreground">Last active <span className="font-bold text-foreground">{alert.last_activity}</span></span>
                   </div>
                 </div>
-                <button className="px-3 py-1.5 rounded-lg bg-primary/15 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors shrink-0">
-                  Reach Out
+                <button
+                  onClick={() => handleReachOut(alert)}
+                  disabled={sending[`outreach-${alert.id}`] || outreachSent[alert.id]}
+                  className="px-3 py-1.5 rounded-lg bg-primary/15 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors shrink-0 disabled:opacity-50"
+                >
+                  {sending[`outreach-${alert.id}`] ? 'Sending...' : outreachSent[alert.id] ? 'Sent ✓' : 'Reach Out'}
                 </button>
               </div>
             </div>
@@ -238,7 +265,11 @@ export default function FacultyDashboard() {
             .filter((s) => cohortFilter === 'All' || s.major === cohortFilter)
             .filter((s) => !search || s.name.toLowerCase().includes(search.toLowerCase()) || s.major.toLowerCase().includes(search.toLowerCase()))
             .map((s) => (
-              <div key={s.name} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/60 transition-colors">
+              <div
+                key={s.name}
+                onClick={() => setSelectedStudent(s)}
+                className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/60 transition-colors cursor-pointer"
+              >
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-xp flex items-center justify-center text-xs font-bold">
                   {s.name.split(' ').map((n) => n[0]).join('')}
                 </div>
@@ -287,7 +318,10 @@ export default function FacultyDashboard() {
                       <span className="text-muted-foreground">Active apps: <span className="font-bold text-destructive">{s.apps}</span></span>
                     </div>
                   </div>
-                  <button className="px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 text-xs font-bold hover:bg-emerald-500 hover:text-white transition-colors shrink-0">
+                  <button
+                    onClick={() => setSelectedStudent(s)}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 text-xs font-bold hover:bg-emerald-500 hover:text-white transition-colors shrink-0"
+                  >
                     Open Profile
                   </button>
                 </div>
@@ -323,17 +357,20 @@ export default function FacultyDashboard() {
                   </span>
                 ) : (
                   <button
-                    onClick={() => sendNudge(i)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors"
+                    onClick={() => sendNudge(i, alert)}
+                    disabled={sending[`nudge-${i}`]}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors disabled:opacity-50"
                     aria-label={`Send cohort nudge email for: ${alert.message}`}
                   >
-                    <Send className="w-3.5 h-3.5" /> Send Cohort Nudge Email
+                    <Send className="w-3.5 h-3.5" /> {sending[`nudge-${i}`] ? 'Sending...' : 'Send Cohort Nudge Email'}
                   </button>
                 )}
               </div>
             ))}
         </div>
       </div>
+
+      <StudentProfileModal student={selectedStudent} onClose={() => setSelectedStudent(null)} />
     </div>
   );
 }
