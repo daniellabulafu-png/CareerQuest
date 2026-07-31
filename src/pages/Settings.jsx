@@ -4,6 +4,8 @@ import { Switch } from '@/components/ui/switch';
 import { LC_MAJORS, CAREER_TRACKS, NACE_COMPETENCIES, naceColors } from '@/lib/nace';
 import { base44 } from '@/api/base44Client';
 import { PALETTES, PALETTE_KEYS } from '@/lib/themes';
+import { useStudent } from '@/hooks/useEntities';
+import { useQueryClient } from '@tanstack/react-query';
 
 function Section({ icon: Icon, title, desc, children }) {
   return (
@@ -60,11 +62,31 @@ function ChipPicker({ options, selected, onToggle }) {
 
 export default function Settings() {
   const { settings, update } = useSettings();
+  const { data: student } = useStudent();
+  const queryClient = useQueryClient();
   const gradYears = Array.from({ length: 6 }, (_, i) => String(2026 + i));
 
-  const toggleIn = (key, value) => {
+  // Persist academic profile changes to the StudentProfile entity so the
+  // dashboard reflects them. Local settings stay in sync via `update`.
+  const updateAcademic = (patch) => {
+    update(patch);
+    if (student?.id) {
+      const entityPatch = {};
+      if (patch.majors !== undefined) entityPatch.major = patch.majors.join(', ');
+      if (patch.minors !== undefined) entityPatch.minor = patch.minors.join(', ');
+      if (patch.gradYear !== undefined) entityPatch.grad_year = patch.gradYear;
+      if (patch.careerTrack !== undefined) entityPatch.bio = `Career Track: ${patch.careerTrack}`;
+      if (Object.keys(entityPatch).length) {
+        base44.entities.StudentProfile.update(student.id, entityPatch)
+          .then(() => queryClient.invalidateQueries({ queryKey: ['studentProfile'] }))
+          .catch(() => {});
+      }
+    }
+  };
+
+  const toggleInAcademic = (key, value) => {
     const arr = settings[key] || [];
-    update({ [key]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value] });
+    updateAcademic({ [key]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value] });
   };
 
   return (
@@ -124,18 +146,18 @@ export default function Settings() {
       <Section icon={GraduationCap} title="Academic Profile" desc="Update your Lewis & Clark academic info">
         <div>
           <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Major(s)</label>
-          <ChipPicker options={LC_MAJORS} selected={settings.majors} onToggle={(v) => toggleIn('majors', v)} />
+          <ChipPicker options={LC_MAJORS} selected={settings.majors} onToggle={(v) => toggleInAcademic('majors', v)} />
         </div>
         <div>
           <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Minor(s)</label>
-          <ChipPicker options={LC_MAJORS} selected={settings.minors} onToggle={(v) => toggleIn('minors', v)} />
+          <ChipPicker options={LC_MAJORS} selected={settings.minors} onToggle={(v) => toggleInAcademic('minors', v)} />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Graduation Year</label>
             <select
               value={settings.gradYear}
-              onChange={(e) => update({ gradYear: e.target.value })}
+              onChange={(e) => updateAcademic({ gradYear: e.target.value })}
               className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="">Select…</option>
@@ -146,7 +168,7 @@ export default function Settings() {
             <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Target Career Track</label>
             <select
               value={settings.careerTrack}
-              onChange={(e) => update({ careerTrack: e.target.value })}
+              onChange={(e) => updateAcademic({ careerTrack: e.target.value })}
               className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="">Select…</option>
