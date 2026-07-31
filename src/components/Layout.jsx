@@ -4,6 +4,7 @@ import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { useStudent } from '@/hooks/useEntities';
+import { isGuest, clearGuest } from '@/lib/guest';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -23,7 +24,7 @@ export default function Layout() {
 
   const displayName = user?.full_name || student?.name || 'Explorer';
   const initials = displayName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
-  const subtitle = student ? `Student · Lv ${student.level || 1}` : 'Loading...';
+  const subtitle = isGuest() ? 'Guest' : (student ? `Student · Lv ${student.level || 1}` : 'Loading...');
 
   return (
     <div className="min-h-screen flex">
@@ -87,7 +88,10 @@ export default function Layout() {
               <p className="text-[10px] text-muted-foreground">{subtitle}</p>
             </div>
             <button
-              onClick={() => base44.auth.logout('/login')}
+              onClick={() => {
+                if (isGuest()) { clearGuest(); window.location.href = '/login'; }
+                else { base44.auth.logout('/login'); }
+              }}
               className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               aria-label="Log out"
               title="Log out"
