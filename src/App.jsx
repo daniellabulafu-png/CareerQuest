@@ -41,9 +41,14 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
+      // Only redirect to login when not already on an auth page — otherwise
+      // this creates an infinite reload loop (login page → auth_required →
+      // redirect to login → repeat). Auth pages render fine without a session.
+      const authPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
+      if (!authPaths.includes(window.location.pathname)) {
+        navigateToLogin();
+        return null;
+      }
     }
   }
 
