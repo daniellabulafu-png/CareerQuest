@@ -36,8 +36,9 @@ export function useStudent() {
         ? await base44.entities.StudentProfile.filter({ created_by_id: user.id })
         : await base44.entities.StudentProfile.list();
       if (list?.[0]) return list[0];
-      // Auto-create a profile for new users so the dashboard renders and XP works
-      if (user?.id) {
+      // Auto-create a profile for new STUDENT users so the dashboard renders and XP works.
+      // Faculty/advisors don't need a student profile.
+      if (user?.id && user.account_type !== 'faculty') {
         try {
           return await base44.entities.StudentProfile.create({
             name: user.full_name || user.email || 'New Explorer',
@@ -83,7 +84,10 @@ export function useSkillNodes() {
 export function useBusinessCards() {
   return useQuery({
     queryKey: ['businessCards'],
-    queryFn: async () => (await myList('BusinessCard', {}, '-last_contact_date', 50)) || [],
+    queryFn: async () => {
+      const list = await base44.entities.BusinessCard.list('-last_contact_date', 50);
+      return list || [];
+    },
   });
 }
 
@@ -107,7 +111,10 @@ export function useInterviewResults() {
 export function useApplications() {
   return useQuery({
     queryKey: ['applications'],
-    queryFn: async () => (await myList('Application')) || [],
+    queryFn: async () => {
+      const list = await base44.entities.Application.list();
+      return list || [];
+    },
   });
 }
 
