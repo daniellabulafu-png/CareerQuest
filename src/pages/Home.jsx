@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Wand2, TrendingUp, Briefcase, Sparkles, Award, ChevronRight } from 'lucide-react';
+import { Wand2, TrendingUp, Briefcase, Sparkles, Award, ChevronRight, CalendarCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useStudent, useExperiences, useBadges, useInterviewResults } from '@/hooks/useEntities';
 import LevelHeader from '@/components/LevelHeader';
@@ -25,6 +25,30 @@ export default function Home() {
       <LevelHeader student={student} />
 
       <PillarProgress />
+
+      {/* Book Career Center Appointment CTA */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600/20 via-teal-600/15 to-success/20 border border-emerald-500/30 p-5">
+        <div className="relative z-10 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center glow-success">
+              <CalendarCheck className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="font-bold text-base">Book Career Center Appointment</h2>
+              <p className="text-xs text-muted-foreground">Meet 1-on-1 with an L&C career advisor for guidance, reviews, and more</p>
+            </div>
+          </div>
+          <a
+            href="https://careerdevelopmentappt.youcanbook.me/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-sm flex items-center gap-2 hover:opacity-90 transition-opacity glow-success"
+          >
+            <CalendarCheck className="w-4 h-4" />
+            Book Appointment
+          </a>
+        </div>
+      </div>
 
       {/* AI Assistant CTA */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600/20 via-fuchsia-600/15 to-primary/20 border border-violet-500/30 p-5">
