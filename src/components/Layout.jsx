@@ -2,6 +2,8 @@ import { Outlet, NavLink, useLocation, Link } from 'react-router-dom';
 import { Shield, LayoutDashboard, GitBranch, Swords, Users, Award, KanbanSquare, BarChart3, GraduationCap, Settings as SettingsIcon, LogOut } from 'lucide-react';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
+import { useStudent } from '@/hooks/useEntities';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -16,6 +18,12 @@ const navItems = [
 export default function Layout() {
   const location = useLocation();
   const isFaculty = location.pathname.startsWith('/faculty');
+  const { user } = useAuth();
+  const { data: student } = useStudent();
+
+  const displayName = user?.full_name || student?.name || 'Explorer';
+  const initials = displayName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
+  const subtitle = student ? `Student · Lv ${student.level || 1}` : 'Loading...';
 
   return (
     <div className="min-h-screen flex">
@@ -72,11 +80,11 @@ export default function Layout() {
           </div>
           <div className="flex items-center gap-2.5 px-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-xs font-bold text-white">
-              AC
+              {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold truncate">Alex Chen</p>
-              <p className="text-[10px] text-muted-foreground">Student · Lv 3</p>
+              <p className="text-xs font-semibold truncate">{displayName}</p>
+              <p className="text-[10px] text-muted-foreground">{subtitle}</p>
             </div>
             <button
               onClick={() => base44.auth.logout('/login')}
