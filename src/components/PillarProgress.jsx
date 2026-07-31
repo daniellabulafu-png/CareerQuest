@@ -50,7 +50,7 @@ export default function PillarProgress() {
         <Pillar icon={Compass} label="Guidance" value={`${guidancePct}%`} sub={`${completedQuests}/${quests.length} quests done`} percent={guidancePct} color="bg-gradient-to-br from-primary to-violet-500" glow="glow-primary" />
         <Pillar icon={GitBranch} label="Skills" value={`${unlockedCount}`} sub={`${skillsPct}% of tree unlocked`} percent={skillsPct} color="bg-gradient-to-br from-violet-500 to-fuchsia-500" />
         <Pillar icon={Briefcase} label="Experience" value={`${expCount}`} sub="logged activities" percent={expPct} color="bg-gradient-to-br from-emerald-500 to-teal-500" glow="glow-success" />
-        <Pillar icon={Users} label="Connections" value={`${networkScore}`} sub={`${hotCount} hot contacts`} percent={networkScore} color="bg-gradient-to-br from-orange-500 to-hot" glow="glow-hot" />
+        <Pillar icon={Users} label="Connections" value={`${cards.length}`} sub={`${hotCount} hot contacts`} percent={networkScore} color="bg-gradient-to-br from-orange-500 to-hot" glow="glow-hot" />
       </div>
     </div>
   );
