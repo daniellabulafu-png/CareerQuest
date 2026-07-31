@@ -142,6 +142,31 @@ export function useJobAnalyses() {
   });
 }
 
+export function useAdvisingRequests() {
+  return useQuery({
+    queryKey: ['advisingRequests'],
+    queryFn: async () => {
+      const requests = await base44.entities.AdvisingRequest.filter({ status: 'pending' });
+      if (!requests?.length) return [];
+      const profiles = await base44.entities.StudentProfile.list('-created_date', 500);
+      return requests.map((r) => {
+        const profile = profiles.find((p) => p.created_by_id === r.student_id);
+        return {
+          id: r.id,
+          name: profile?.name || 'Unknown Student',
+          major: profile?.major || 'Undeclared',
+          level: profile?.level || 1,
+          xp: profile?.total_xp || 0,
+          gaps: [],
+          apps: 0,
+          note: r.topic || r.notes || '',
+          student_id: r.student_id,
+        };
+      });
+    },
+  });
+}
+
 export function levelFromXp(totalXp) {
   return Math.floor(totalXp / 250) + 1;
 }
