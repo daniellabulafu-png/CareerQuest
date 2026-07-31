@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useLocation, Link } from 'react-router-dom';
-import { Shield, LayoutDashboard, GitBranch, Swords, Users, Award, KanbanSquare, BarChart3, GraduationCap, Settings as SettingsIcon } from 'lucide-react';
+import { Shield, LayoutDashboard, GitBranch, Swords, Users, Award, KanbanSquare, BarChart3, GraduationCap, Settings as SettingsIcon, LogOut } from 'lucide-react';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { base44 } from '@/api/base44Client';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -77,6 +78,14 @@ export default function Layout() {
               <p className="text-xs font-semibold truncate">Alex Chen</p>
               <p className="text-[10px] text-muted-foreground">Student · Lv 3</p>
             </div>
+            <button
+              onClick={() => base44.auth.logout('/login')}
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+              aria-label="Log out"
+              title="Log out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>
