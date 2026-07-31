@@ -4,10 +4,11 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
+import { LogIn, Mail, Lock, Loader2, Eye } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { setGuest } from "@/lib/guest";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -44,6 +45,11 @@ export default function Login() {
 
   const handleGoogle = () => {
     base44.auth.loginWithProvider("google", returnTo);
+  };
+
+  const handleGuest = () => {
+    setGuest();
+    window.location.href = returnTo;
   };
 
   return (
@@ -138,6 +144,24 @@ export default function Login() {
           )}
         </Button>
       </form>
+
+      <div className="relative my-5">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-3 text-muted-foreground">Just looking?</span>
+        </div>
+      </div>
+
+      <Button
+        variant="secondary"
+        className="w-full h-12 text-sm font-medium"
+        onClick={handleGuest}
+      >
+        <Eye className="w-4 h-4 mr-2" />
+        Continue as Guest
+      </Button>
     </AuthLayout>
   );
 }
